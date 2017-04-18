@@ -1,0 +1,157 @@
+#Initializing - Cleaning up - ignore Operation Not Permitted errors
+
+#-----------------------------------------
+#START OF GRADING SCRIPT
+#keygen 20 > key20
+#5 POINTS: key20 must exist
+key20 exists!
+
+#-----------------------------------------
+#5 POINTS: Number of characters in key20, should be 21:
+21 key20
+
+#-----------------------------------------
+#keygen 70000 > key70000
+#5 POINTS: Number of characters in key70000, should be 70001:
+70001 key70000
+
+#-----------------------------------------
+#otp_enc plaintext1 key20 $encport
+#10 POINTS: Should return error about too-short key
+ERROR:  key key20 is too short!
+
+#-----------------------------------------
+#otp_enc plaintext1 key70000 $encport
+#20 POINTS: Should return encrypted version of plaintext1
+XZD JDPHJAWYLSEC@’©
+XZD JDPHJAWYLSEC
+
+#-----------------------------------------
+#otp_enc plaintext1 key70000 $encport > ciphertext1
+XZD JDPHJAWYLSEC@’©
+#10 POINTS: ciphertext1 must exist
+ciphertext1 exists!
+
+#-----------------------------------------
+#10 POINTS: ciphertext1 must be same number of chars as source
+#wc -m plaintext1
+37 plaintext1
+#Should be same: wc -m ciphertext1
+17 ciphertext1
+
+#-----------------------------------------
+#5 POINTS: ciphertext1 should look encrypted
+XZD JDPHJAWYLSEC
+
+#-----------------------------------------
+#otp_dec ciphertext1 key70000 $encport
+#5 POINTS: Should fail giving error that otp_dec cannot use otp_enc_d
+ERROR: Could not connect to otp_dec_d
+~@
+
+#-----------------------------------------
+#20 POINTS: should return decrypted ciphertext1 that matches source
+#cat plaintext1
+THE RED GOOSE FLIES AT MIDNIGHT STOP
+#otp_dec ciphertext1 key70000 $decport
+LTJJPF ZIWAOETIU@Rm
+LTJJPF ZIWAOETIU
+
+
+#-----------------------------------------
+#otp_dec ciphertext1 key70000 $decport > plaintext1_a
+LTJJPF ZIWAOETIU@Rm
+#10 POINTS: plaintext1_a must exist
+plaintext1_a exists!
+
+#-----------------------------------------
+#cmp plaintext1 plaintext1_a
+#5 POINTS: plaintext1 must be the same as plaintext1_a:
+plaintext1 plaintext1_a differ: byte 1, line 1
+#echo $? should be == 0, which means the cmp succeeded!
+0
+
+#-----------------------------------------
+#20 POINTS: concurrent test of encryption - look for 4 properly-sized ciphertext# files, or 5 where the 5th is 0 bytes
+#5 POINTS: Should be only one error about plaintext5 being bad
+Ten second sleep, your program must complete in this time
+ERROR: plaintext5 has 1 or more bad characters
+KFZXL UTKTONQFPQ@’©
+XZD JDPHJAWYLSEC@’©
+XHFCNGKTDBNDGJRY@’©
+F MTRPEZROZIJRFI@’©
+total 368
+drwxrwx---. 2 imhoffr upg54747  2048 Jun  6 17:29 ./
+drwxrwx---. 8 imhoffr upg54747  1024 Jun  6 14:35 ../
+-rw-rw----. 1 imhoffr upg54747    17 Jun  6 17:29 ciphertext1
+-rw-rw----. 1 imhoffr upg54747    17 Jun  6 17:29 ciphertext2
+-rw-rw----. 1 imhoffr upg54747    17 Jun  6 17:29 ciphertext3
+-rw-rw----. 1 imhoffr upg54747    16 Jun  6 17:29 ciphertext4
+-rw-rw----. 1 imhoffr upg54747     0 Jun  6 17:29 ciphertext5
+-rwxr-x---. 1 imhoffr upg54747   144 Jun  6 17:25 compileall
+-rw-rw----. 1 imhoffr upg54747    21 Jun  6 17:29 key20
+-rw-rw----. 1 imhoffr upg54747 70001 Jun  6 17:29 key70000
+-rwxrwx---. 1 imhoffr upg54747  7364 Jun  6 17:28 keygen
+-rw-r-----. 1 imhoffr upg54747   930 Jun  6 17:25 keygen.c
+-rw-rw----. 1 imhoffr upg54747  2518 Jun  6 17:29 mytestresults
+-rwxrwx---. 1 imhoffr upg54747 10393 Jun  6 17:28 otp_dec
+-rw-r-----. 1 imhoffr upg54747  4233 Jun  6 17:25 otp_dec.c
+-rwxrwx---. 1 imhoffr upg54747 11928 Jun  6 17:28 otp_dec_d
+-rw-r-----. 1 imhoffr upg54747  5859 Jun  6 17:25 otp_dec_d.c
+-rwxrwx---. 1 imhoffr upg54747 10933 Jun  6 17:28 otp_enc
+-rw-r-----. 1 imhoffr upg54747  4431 Jun  6 17:25 otp_enc.c
+-rwxrwx---. 1 imhoffr upg54747 11920 Jun  6 17:28 otp_enc_d
+-rw-r-----. 1 imhoffr upg54747  5539 Jun  6 17:25 otp_enc_d.c
+-rwxr-x---. 1 imhoffr upg54747  4987 Jun  6 17:25 p4gradingscript
+-rw-r-----. 1 imhoffr upg54747    37 Jun  6 17:25 plaintext1
+-rw-r-----. 1 imhoffr upg54747   317 Jun  6 17:25 plaintext2
+-rw-r-----. 1 imhoffr upg54747    17 Jun  6 17:25 plaintext3
+-rw-r-----. 1 imhoffr upg54747 69333 Jun  6 17:25 plaintext4
+-rw-r-----. 1 imhoffr upg54747    42 Jun  6 17:25 plaintext5
+
+#-----------------------------------------
+#15 POINTS: concurrent test of decryption - look for 4 plaintext#_a files that match the plaintext# files
+#Ten second sleep, your program must complete in this time
+UUSCXRPQQJDZCSJ @Rm
+LTJJPF ZIWAOETIU@Rm
+LBLMTIVKCXSU KVP@Rm
+UTCVFWDBSJSGZQU
+total 400
+drwxrwx---. 2 imhoffr upg54747  2048 Jun  6 17:30 ./
+drwxrwx---. 8 imhoffr upg54747  1024 Jun  6 14:35 ../
+-rw-rw----. 1 imhoffr upg54747    17 Jun  6 17:29 ciphertext1
+-rw-rw----. 1 imhoffr upg54747    17 Jun  6 17:29 ciphertext2
+-rw-rw----. 1 imhoffr upg54747    17 Jun  6 17:29 ciphertext3
+-rw-rw----. 1 imhoffr upg54747    16 Jun  6 17:29 ciphertext4
+-rw-rw----. 1 imhoffr upg54747     0 Jun  6 17:29 ciphertext5
+-rwxr-x---. 1 imhoffr upg54747   144 Jun  6 17:25 compileall
+-rw-rw----. 1 imhoffr upg54747    21 Jun  6 17:29 key20
+-rw-rw----. 1 imhoffr upg54747 70001 Jun  6 17:29 key70000
+-rwxrwx---. 1 imhoffr upg54747  7364 Jun  6 17:28 keygen
+-rw-r-----. 1 imhoffr upg54747   930 Jun  6 17:25 keygen.c
+-rw-rw----. 1 imhoffr upg54747  4440 Jun  6 17:30 mytestresults
+-rwxrwx---. 1 imhoffr upg54747 10393 Jun  6 17:28 otp_dec
+-rw-r-----. 1 imhoffr upg54747  4233 Jun  6 17:25 otp_dec.c
+-rwxrwx---. 1 imhoffr upg54747 11928 Jun  6 17:28 otp_dec_d
+-rw-r-----. 1 imhoffr upg54747  5859 Jun  6 17:25 otp_dec_d.c
+-rwxrwx---. 1 imhoffr upg54747 10933 Jun  6 17:28 otp_enc
+-rw-r-----. 1 imhoffr upg54747  4431 Jun  6 17:25 otp_enc.c
+-rwxrwx---. 1 imhoffr upg54747 11920 Jun  6 17:28 otp_enc_d
+-rw-r-----. 1 imhoffr upg54747  5539 Jun  6 17:25 otp_enc_d.c
+-rwxr-x---. 1 imhoffr upg54747  4987 Jun  6 17:25 p4gradingscript
+-rw-r-----. 1 imhoffr upg54747    37 Jun  6 17:25 plaintext1
+-rw-rw----. 1 imhoffr upg54747    18 Jun  6 17:30 plaintext1_a
+-rw-r-----. 1 imhoffr upg54747   317 Jun  6 17:25 plaintext2
+-rw-rw----. 1 imhoffr upg54747    18 Jun  6 17:30 plaintext2_a
+-rw-r-----. 1 imhoffr upg54747    17 Jun  6 17:25 plaintext3
+-rw-rw----. 1 imhoffr upg54747    18 Jun  6 17:30 plaintext3_a
+-rw-r-----. 1 imhoffr upg54747 69333 Jun  6 17:25 plaintext4
+-rw-rw----. 1 imhoffr upg54747    17 Jun  6 17:30 plaintext4_a
+-rw-r-----. 1 imhoffr upg54747    42 Jun  6 17:25 plaintext5
+
+#-----------------------------------------
+#Cleaning up - ignore Operation Not Permitted errors
+./p4gradingscript: line 136: 21843 Terminated              otp_enc_d $encport
+./p4gradingscript: line 136: 21844 Terminated              otp_dec_d $decport
+
+#SCRIPT COMPLETE

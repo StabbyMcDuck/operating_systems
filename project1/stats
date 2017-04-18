@@ -1,0 +1,224 @@
+#!/bin/bash
+# PROGRAM 1 - STATS
+# CS344-400
+# By Regina Imhoff
+# imhoffr@oregonstate.edu
+# Due 04/18/2016
+#
+# Some resources used:
+#	http://unix.stackexchange.com/questions/184863/what-is-the-meaning-of-ifs-n-in-bash-scripting
+
+#############################
+# set for exit immediately! #
+#############################
+set -e
+
+#############
+# Variables #
+#############
+inputFile="" #input file
+average=0 # sum/count 
+median=0 # middle number of the set of numbers
+sum=0 # adding all the numbers together
+divisor=0 
+
+numberCount=0 #set of numbers
+numberOfRows=0
+
+errorMsg="Usage: stats {-rows | -cols} [inputFile]"
+cannotReadMsg="Cannot read"
+
+###################
+# Temporary Files #
+###################
+tempfile1=$$_temp1
+tempfile2=$$_temp2
+tempInputFile=$$_temp3
+
+# remove temp files
+trap "rm -rf $tempfile1 $tempfile2 $tempInputFile; exit 1" INT HUP TERM
+
+#############
+# Functions #
+#############
+
+###############
+# makeNewFile #
+###############
+makeNewFile()
+{
+	while read line
+	do
+		echo -e "$line" >> $tempInputFile
+	done < /dev/stdin
+
+	inputFile=$tempInputFile
+};
+
+#########################
+# averageCalculation    #
+# $1 number count param #
+# $2 sum param          #
+#########################
+averageCalculation(){
+	
+	# check for zero
+	if(($1==0))
+	then
+		average=""
+	# for all non-zeros	
+	else
+		((average = (($2 + ($1 / 2)) / $1 )))
+	fi		
+	
+};
+
+###########################
+# medianNumberCalculation #
+# $1 number count param   #
+# $2 sum param            #
+###########################
+medianNumberCalculation(){
+	# add newlines with \n
+	sorted=$(echo $2 | tr " " "\n" | sort -g | tr "\n" " ")
+	middleMostNumber=$((($1 / 2) + 1))
+	median=$(echo $sorted | cut -d " " -f $middleMostNumber)
+};
+
+##################
+# rowsFormatting #
+##################
+rowsFormatting(){
+	echo "Average	Median"
+
+	while read line
+	do
+		# \t is tab
+		rowValue=$(echo $line | tr "\t" "\n")
+		
+		#reset calculation numbers!
+		average=0
+		sum=0
+		numberCount=0
+		
+		for selectedNumber in $rowValue
+		do
+			sum=$(expr $sum + $selectedNumber)
+			# increase numberCount by one
+			((++numberCount))
+		done
+		
+		averageCalculation $numberCount $sum
+		
+		# TFH = Temp File Hop
+		tempFileHop=$TFH
+		TFH=$''
+		medianNumberCalculation $numberCount $rowValue
+		tempFileHop=$TFHsteptwo
+		
+		# print
+		echo -e "$average\t$median"
+		
+	done < "$inputFile"
+};
+
+#####################
+# columnsFormatting #
+#####################
+columnsFormatting(){
+	numberOfColumns=$(head -n 1 $inputFile | wc -w)
+	for i in $(seq 1 $numberOfColumns)
+	do
+		numberValues=$(cut -f $i $inputFile | tr "\t" "\n")
+		sum=0
+		for num in $numberValues
+		do
+			set +e # temporary measure to turn off exit on error since sum may be zero and cause error
+			sum=$(expr $sum + $num)
+			set -e #turn back on
+		done
+		
+		numberCount=($(echo $numberValues | wc -w))
+		
+		averageCalculation $numberCount $sum
+
+		tempIFS=$IFS
+		IFS=$''
+		medianNumberCalculation $numberCount $numberValues
+		IFS=$tempIFS
+		
+		# Results stored in the temp file
+		if [ $i -eq 1 ]
+		then
+			echo $average >> $tempfile1
+			echo $median >> $tempfile2
+		else
+			sed -e "s/$/	$average/" -i $tempfile1
+			sed -e "s/$/	$median/" -i $tempfile2
+		fi
+		done
+	
+	# Print off the results
+	if [[ -s $inputFile ]]
+	then
+		echo "Averages:"
+		cat $tempfile1
+		echo "Medians:"
+		cat $tempfile2
+	else
+		echo "Averages:"
+		echo "Medians:"
+	fi
+};
+
+#################
+# End Functions #
+#################
+
+#################
+# MAIN PROGRAM: #
+#################
+############################################################
+# check the number of arguments                            #
+# print off error message if the wrong number of arguments #
+############################################################
+if [ "$#" -gt 2 ] || [ "$#" -lt 1 ]
+then
+	echo $errorMsg >&2
+	exit 1
+fi
+#######
+# 
+####
+if [ "$2" == "" ]
+then
+		makeNewFile
+else
+	if [ ! -r "$2" ]
+	then
+		echo $cannotReadMsg
+		exit 1
+	else
+		inputFile=$2
+	fi
+fi
+
+#check if user wants rows or columns
+if [[ "$1" == -r* ]]
+then
+	rowsFormatting
+elif [[ "$1" == -c* ]]
+then
+	columnsFormatting
+else
+	echo $errorMsg >&2
+	exit 1
+fi
+
+#delete the temp files
+rm -rf $tempfile1 $tempfile2 $tempInputFile
+
+exit 0	
+
+
+

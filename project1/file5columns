@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# Program 1
+#
+# To create a test run of your program put this file and your stats
+# program, which must be named "stats", together in a directory.  Then run
+# this command, which will take perhaps 15 seconds:
+#
+# % p1gradingscript > p1results
+#
+# Your whole program must be contained in the single file named "stats".
+#
+
+LS=/bin/ls
+RM=rm
+PS=/bin/ps
+TESTDIR=assign1.test.$$
+STATS=./stats
+
+if test -d $TESTDIR
+	then
+		echo Please rename or remove $TESTDIR
+		exit 1
+fi
+
+mkdir $TESTDIR 2>&1
+cp stats $TESTDIR 2>&1
+
+cd $TESTDIR 2>&1
+chmod +x stats 2>&1
+
+echo --------------------------------------------------------------------------
+i=0
+while [ $i -lt 50000 ]
+do
+	echo "$i	`expr $i \* 2`"
+	i=`expr $i + 100`
+done > file5
+echo
+$LS -l 2>&1
+echo
+echo
+
+echo --------------------------------------------------------------------------
+echo File 5 Statistics by Cols: 1 point per number: 4
+echo
+$STATS -cols file5 2>&1
+echo
+echo
+
+echo --------------------------------------------------------------------------
+echo Check for Temporary Files: 5 points if no temp files
+echo
+$LS 2>&1
+echo
+echo
+
+cd ..
+rm -rf $TESTDIR 2>&1
